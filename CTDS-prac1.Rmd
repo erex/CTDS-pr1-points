@@ -24,6 +24,8 @@ The purpose of this exercise is to analyse point transect survey data: it can so
 
 # Objectives
 
+*unsure about utility of objectives, inconsistent in format with other practicals*
+
 The aim of this practical are to:
 
 1.  Practice fitting detection functions to point transect survey data.
