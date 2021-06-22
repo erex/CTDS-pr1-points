@@ -48,7 +48,7 @@ PTExercise.uf.cos.t20m <- ds(data=PTExercise, transect="point", key="unif",
                         adjustment="cos", truncation=20,convert.units=conversion.factor)
 ```
 
-```{r, echo=F}
+```{r, echo=FALSE}
 # Same caveat as with previous exercises, do not get excited
 #   about the code in this chunk; it is not necessary for your 
 #   understanding of distance sampling.
@@ -108,7 +108,7 @@ wrensnap.hr.cos.t110 <- ds(data=wren_snapshot, key="hr", adjustment=NULL,
                         convert.units=conversion.factor)
 ```
 
-```{r, echo=F}
+```{r, echo=FALSE}
 # Harvest results
 n <- 2
 wren.tab <- data.frame(Method=c("Five minute","Snapshot"), Density=rep(NA,n), 

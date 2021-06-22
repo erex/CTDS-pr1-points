@@ -20,16 +20,8 @@ csl: apa.csl
 knitr::opts_chunk$set(echo=TRUE, message=F, warning=F)
 ```
 
-The purpose of this exercise is to analyse point transect survey data: it can sometimes be more difficult than line transect data. In the first problem, the data are simulated and so the true density is known. In the second problem, two different data collection methods were used to survey song birds.
+The purpose of this exercise is to analyse point transect survey data: camera trap data are a special case of point transect sampling. This practical acquaints you with fitting detection functions to point transect data.  In the first problem, the data are simulated and so the true density is known. In the second problem, two different data collection methods were used to survey song birds.
 
-# Objectives
-
-*unsure about utility of objectives, inconsistent in format with other practicals*
-
-The aim of this practical are to:
-
-1.  Practice fitting detection functions to point transect survey data.
-2.  Use data from the `Distance` package.
 
 # Simulated survey data
 
