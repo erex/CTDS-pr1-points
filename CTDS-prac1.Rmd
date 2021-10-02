@@ -22,14 +22,13 @@ knitr::opts_chunk$set(echo=TRUE, message=F, warning=F)
 
 The purpose of this exercise is to analyse point transect survey data: camera trap data are a special case of point transect sampling. This practical acquaints you with fitting detection functions to point transect data.  In the first problem, the data are simulated and so the true density is known. In the second problem, two different data collection methods were used to survey song birds.
 
-
 # Simulated survey data
 
 Simulated point transect data from 30 points are given in the data set `PTExercise`. These data were generated from a half-normal detection function and the true density was 79.8 animals/hectare *Note*: 1 hectare=0.01km$^2$. The radial distances were recorded in metres.
 
 Load the data, check it is OK and plot the distribution of radial distances.
 
-```{r, echo=T, eval=F}
+```{r, echo=T, eval=FALSE}
 library(Distance)
 # Read in data
 data("PTExercise")
@@ -43,16 +42,22 @@ hist(PTExercise$distance)
 
 To fit a point transect detection function, the argument `transect="point"` needs to be specified:
 
-```{r, echo=T, eval=F}
+```{r, echo=T, eval=FALSE}
 ptdat.hn <- ds(data=PTExercise, transect="point", key="hn", 
                convert.units=conversion.factor)
+```
+
+The fit of the detection function to the observed distance data should be assessed using the `gof_ds()` function:
+
+```{r, echo=TRUE, eval=FALSE}
+gof_ds(ptdat.hn)
 ```
 
 The `convert.units` argument gives the estimated density in animals per hectare.
 
 The detection function can be plotted as for line transects using the `plot()` function
 
-```{r, eval=F}
+```{r, eval=FALSE}
 plot(ptdat.hn)
 ```
 
@@ -60,7 +65,7 @@ plot(ptdat.hn)
 
 To plot the more informative probability density function (pdf), an additional argument is required in the `plot()` function:
 
-```{r, eval=F}
+```{r, eval=FALSE}
 plot(ptdat.hn, pdf=TRUE)
 ```
 
@@ -88,7 +93,7 @@ knitr::include_graphics("https://workshops.distancesampling.org/standrews-2019/i
 
 Data for these methods are available in the `Distance` package. This is convenient because each data set can be accessed as follows:
 
-```{r, echo=T, eval=F}
+```{r, echo=T, eval=FALSE}
 # Extract wren data for 5minute point count
 data("wren_5min")
 conversion.factor <- convert_units("meter", NULL, "hectare")
@@ -96,7 +101,7 @@ conversion.factor <- convert_units("meter", NULL, "hectare")
 
 You will see that there is an object called `wren_5min` in your `R` workspace. There is also a data object available in `Distance` for the snapshot method (i.e. `wren_snapshot`) which can be loaded in the same way. Have a look at the `wren_5min` data with
 
-```{r, echo=T, eval=F}
+```{r, echo=T, eval=FALSE}
 head(wren_5min, n=3)
 ```
 
