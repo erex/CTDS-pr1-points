@@ -24,7 +24,7 @@ The purpose of this exercise is to analyse point transect survey data: camera tr
 
 # Simulated survey data
 
-Simulated point transect data from 30 points are given in the data set `PTExercise`. These data were generated from a half-normal detection function and the true density was 79.8 animals/hectare *Note*: 1 hectare=0.01km$^2$. The radial distances were recorded in metres.
+Simulated point transect data from 30 points are given in the data set `PTExercise`. These data were generated from a half-normal detection function and the true density was 79.8 animals/hectare *Note*: 1 hectare=0.01km$^2$. The radial distances were recorded in metres.  Although the data were simulated with exact distances to each detection, we are going to analyze the data as if it were collected in equally-spaced 2.5m distance bins, because binned (also called ``interval'') data are the norm in camera trap surveys and so this is better practice for the analyses to come in later practicals.
 
 Load the data, check it is OK and plot the distribution of radial distances.
 
@@ -40,11 +40,12 @@ hist(PTExercise$distance)
 
 # Fit and plot half normal detection function
 
-To fit a point transect detection function, the argument `transect="point"` needs to be specified:
+To fit a point transect detection function, the argument `transect="point"` needs to be specified; we also specify 2.5m distance bins out to a maximum distance of 35m using the argument `cutpoints`:
 
 ```{r, echo=T, eval=FALSE}
+bin.cutpoints <- seq(0, 35, by = 2.5)
 ptdat.hn <- ds(data=PTExercise, transect="point", key="hn", 
-               convert.units=conversion.factor)
+               convert.units=conversion.factor, cutpoints = bin.cutpoints)
 ```
 
 The fit of the detection function to the observed distance data should be assessed using the `gof_ds()` function:
@@ -78,6 +79,14 @@ Experiment with keys other than the half normal (i.e. hazard rate and uniform) t
 
 How do the bias and precision compare between models?
 
+Note, to define a different truncation distance, you can change the upper limit of the cutpoints sequence -- for example, to define a truncation distance of 30m and then fit a half-normal detection function, you could use the code:
+
+```{r, echo=TRUE, eval=FALSE}
+bin.cutpoints.30m <- seq(0, 30, by = 2.5)
+ptdat.hn.t30m <- ds(data=PTExercise, transect="point", key="hn", 
+                    convert.units=conversion.factor, cutpoints = bin.cutpoints.30m)
+```
+
 # Wren data (Optional)
 
 A point transect survey of songbirds was conducted at Montrave, Fife, Scotland, in 2004 [@buckland2006] and for this exercise, the data on winter wrens is used. Several different methods of data collection were used and for this exercise, two point transect methods are used:
@@ -106,6 +115,13 @@ head(wren_5min, n=3)
 ```
 
 Note the `Effort` field is `2` meaning each point transect was visited twice. The same applies for `wren_snapshot`.
+
+Although the data were collected using `exact` distances, we will again assume they were collected in distance bins, to make things more comparable with our future camera trap analyses.  We will assume 10m distance bins out to 40m and then 20m bins thereafter; in both datasets the maximum distance is 120m so we can define initial (before truncation) bin cutpoints using:
+
+```{r, echo=T, eval=FALSE}
+bin.cutpoints <- c(0, 10, 20, 30, 40, 60, 80, 100, 120)
+```
+
 
 ## Analyse both conventional and snapshot data sets
 

@@ -29,23 +29,26 @@ library(Distance)
 data("PTExercise")
 head(PTExercise, n=3)
 conversion.factor <- convert_units("meter", NULL, "hectare")
-# Fit half-normal detection function, no truncation
-PTExercise.hn <- ds(data=PTExercise, transect="point", key="hn", convert.units=conversion.factor)
+bin.cutpoints <- seq(0, 35, by = 2.5)
+# Fit half-normal detection function, no truncation, 2.5m cutpoints
+PTExercise.hn <- ds(data=PTExercise, transect="point", key="hn", convert.units=conversion.factor,
+                    cutpoints=bin.cutpoints)
 plot(PTExercise.hn, pdf=TRUE, main="Simulated pt transect data\nHalf normal key function")
 ```
 
 ## Truncation of 20m
 
 ```{r, trunc20, message=FALSE}
+bin.cutpoints.20m <- seq(0, 20, by = 2.5)
 # Half normal, no adjustments
-PTExercise.hn.t20m <- ds(data=PTExercise, transect="point", key="hn", truncation=20,
-                    convert.units=conversion.factor)
+PTExercise.hn.t20m <- ds(data=PTExercise, transect="point", key="hn",
+                    convert.units=conversion.factor, cutpoints=bin.cutpoints.20m)
 # Hazard rate, no adjustments
 PTExercise.hr.t20m <- ds(data=PTExercise, transect="point", key="hr", truncation=20,
-                    convert.units=conversion.factor)
+                    convert.units=conversion.factor, cutpoints=bin.cutpoints.20m)
 # Uniform, cosine adjustments
-PTExercise.uf.cos.t20m <- ds(data=PTExercise, transect="point", key="unif", 
-                        adjustment="cos", truncation=20,convert.units=conversion.factor)
+PTExercise.uf.cos.t20m <- ds(data=PTExercise, transect="point", key="unif", adjustment="cos",
+                             convert.units=conversion.factor, cutpoints=bin.cutpoints.20m)
 ```
 
 The fit of the detection function to the observed distance data should be assessed using the `gof_ds()` function:
@@ -90,19 +93,97 @@ We see a fair degree of variability between analyses - reliable analysis of poin
 
 # Wren data (Optional)
 
-In the code provided below, each data set is loaded and detection functions selected in Buckland [-@buckland2006] are fitted.
+First fit the 5 min data.  We initially consider a suitable truncation
 
 ```{r, echo=TRUE, eval=TRUE}
 data("wren_5min")
-data("wren_snapshot")
 conversion.factor <- convert_units("meter", NULL, "hectare")
-wren5min.uf.cos.t110 <- ds(data=wren_5min, key="unif", adjustment="cos", 
-                        transect="point", truncation=110, 
-                        convert.units=conversion.factor)
-wrensnap.hr.cos.t110 <- ds(data=wren_snapshot, key="hr", adjustment=NULL, 
-                        transect="point", truncation=110, 
-                        convert.units=conversion.factor)
+
+#Make an initial fit to look at truncation - half normal with no adjustments
+bin.cutpoints <- c(0, 10, 20, 30, 40, 60, 80, 100, 120)
+wren5min.hn <- ds(data=wren_5min, key="hn", adjustment = NULL,
+                  transect="point", cutpoints=bin.cutpoints,
+                  convert.units=conversion.factor)
+plot(wren5min.hn)
+plot(wren5min.hn, pdf = TRUE)
 ```
+100m seems suitable - 80m might also be considered, but involves throwing away a considerable chunk of data.
+
+We now try some candidate models with 100m truncation.
+
+```{r, echo=TRUE, eval=TRUE}
+bin.cutpoints.100m <- bin.cutpoints <- c(0, 10, 20, 30, 40, 60, 80, 100)
+#Note - code below issues a warning about non-monotonicity -- will want to
+# check it out if this becomes the selected model
+wren5min.uf.cos.t100 <- ds(data=wren_5min, key="unif", adjustment="cos", 
+                        transect="point", cutpoints=bin.cutpoints.100m,
+                        convert.units=conversion.factor)
+#Note - the code below throws an error when trying the second adjustment term
+# and so just returns the results for key plus one adjustment
+wren5min.hn.herm.t100 <- ds(data=wren_5min, key="hn", adjustment="herm", 
+                        transect="point", cutpoints=bin.cutpoints.100m,
+                        convert.units=conversion.factor)
+wren5min.hr.poly.t100 <- ds(data=wren_5min, key="hr", adjustment="poly", 
+                        transect="point", cutpoints=bin.cutpoints.100m,
+                        convert.units=conversion.factor)
+AIC(wren5min.uf.cos.t100, wren5min.hn.herm.t100, wren5min.hr.poly.t100)
+```
+
+The hazard rate (with no polynomial adjustments) has the lowest AIC.
+
+Now look at the snapshot data - we use the same truncation although there is actually no requirement to do so.
+
+```{r, echo=TRUE, eval=TRUE}
+data("wren_snapshot")
+wrensnap.uf.cos.t100 <- ds(data=wren_snapshot, key="unif", adjustment="cos", 
+                        transect="point", cutpoints=bin.cutpoints.100m,
+                        convert.units=conversion.factor)
+#Note - the half-normal with Hermite adjustments often throws an error
+# and will return the key function without adjustment terms, check # params
+wrensnap.hn.herm.t100 <- ds(data=wren_snapshot, key="hn", adjustment="herm", 
+                        transect="point", cutpoints=bin.cutpoints.100m,
+                        convert.units=conversion.factor)
+wrensnap.hr.poly.t100 <- ds(data=wren_snapshot, key="hr", adjustment="poly", 
+                        transect="point", cutpoints=bin.cutpoints.100m,
+                        convert.units=conversion.factor)
+AIC(wrensnap.uf.cos.t100, wrensnap.hn.herm.t100, wrensnap.hr.poly.t100)
+
+```
+
+The same model as for 5minute data, the hazard rate (with no polynomial adjustments), has the lowest AIC.
+
+## Animal avoidance in Buckland's winter wren point transects?
+
+```{r, fig.height=5, fig.cap="Wren avoidance of observer is evident from surplus of detections 30-60m from point stations."}
+# Plot detection functions
+par(mfrow=c(1,2))
+plot(wren5min.hr.poly.t100, main="5 minute count", pdf = TRUE)
+plot(wrensnap.hr.poly.t100, main="Snapshot moment", pdf = TRUE)
+```
+
+As the detection distance histograms indicate, winter wren showed evidence of observer avoidance, more than other species in the Montrave study. The problem looks more severe when plotting the detection function graph (below), although remember that the histogram bars are scaled in this plot.
+
+```{r, fig.height=5, fig.cap="Corresponding detection function plots."}
+# Plot detection functions
+par(mfrow=c(1,2))
+plot(wren5min.hr.poly.t100, main="5 minute count")
+plot(wrensnap.hr.poly.t100, main="Snapshot moment")
+```
+
+Conduct the goodness of fit test, using `gof_ds()`, we find that the models either just pass (5 min) or just fail (snapshot) the test at an $\alpha$-level of 0.05.
+
+```{r, fig.height=5, fig.cap="Even with evasive movement, detection function models for both the 5-minute and snapshot data pass the goodness of fit test."}
+gof_ds(wren5min.hr.poly.t100)
+gof_ds(wrensnap.hr.poly.t100)
+```
+
+One possible solution would be to combine the 0-40m (or possibly 0-60m) data into one bin -- this will mean animals are then counted in their `correct' bin, although there will then only be 3-4 bins of data to fit the data to, and a very large first bin.
+
+We leave that for a further exercise and compare density estimates between 5-minute and snapshot methods.
+
+## Density estimates
+
+The snapshot method has a (slightly) lower density estimate - in line with what we would expect given that the 5-minute method allows animals to move while the survey is taking place, leading to over-estimation of density (see [@buckland2006] for details - although note that he analyzed the exact distance data rather than data in distance bins, and so got slightly different results).
 
 ```{r, echo=FALSE}
 # Harvest results
@@ -114,25 +195,8 @@ get.results.f <- function(fit.model) { return(c(D=fit.model$dht$individuals$D$Es
          lCL=fit.model$dht$individuals$D$lcl,
          uCL=fit.model$dht$individuals$D$ucl))
 }
-wren.tab[1,2:4] <- get.results.f(wren5min.uf.cos.t110)
-wren.tab[2,2:4] <- get.results.f(wrensnap.hr.cos.t110)
+wren.tab[1,2:4] <- get.results.f(wren5min.hr.poly.t100)
+wren.tab[2,2:4] <- get.results.f(wrensnap.hr.poly.t100)
 knitr::kable(wren.tab, caption="Winter wren density estimates from 5 minute counts and snapshot moment.", digits=3)
 ```
 
-## Detection functions for Buckland's winter wren point transects
-
-```{r, fig.height=5, fig.cap="Wren avoidance of observer is evident from surplus of detections 40-50m from point stations."}
-# Plot detection functions
-par(mfrow=c(1,2))
-plot(wren5min.uf.cos.t110, main="5 minute count")
-plot(wrensnap.hr.cos.t110, main="Snapshot moment")
-```
-
-As the detection distance histograms indicate, winter wren showed evidence of observer avoidance, more than other species in the Montrave study. We show the detection function graph rather than the PDF to emphasise the evasive movement aspect of the data. 
-
-Conduct the goodness of fit test, using `gof_ds()`, we find that the models still suitably fit the data.
-
-```{r, fig.height=5, fig.cap="Even with evasive movement, detection function models for both the 5-minute and snapshot data pass the goodness of fit test."}
-gof_ds(wren5min.uf.cos.t110)
-gof_ds(wrensnap.hr.cos.t110)
-```
