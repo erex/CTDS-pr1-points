@@ -1,5 +1,6 @@
-\documentclass[a4paper]{article}
-\usepackage[printsolution=false]{exercises}
+\documentclass[a4paper, 10pt]{article}
+\usepackage[a4paper, total={6in, 10.5in}]{geometry}
+\usepackage[printsolution=true]{exercises}
 \usepackage{url}
 \usepackage{background, hyperref}
 \usepackage{tcolorbox}
@@ -8,10 +9,11 @@
 \usepackage{xcolor}
 \usepackage[sfdefault]{cabin}
 \usepackage{graphicx}
+\usepackage{wrapfig}
 \usepackage[T1]{fontenc}
 \usepackage[backend=bibtex,style=authoryear,natbib=true]{biblatex}
 \addbibresource{points.bib}
-
+\setlength\parindent{0pt}
 \pagestyle{fancy}
 \fancyhead[L,C,R]{}
 \fancyfoot[L]{\small CTDS workshop, Univ. of St Andrews}
@@ -35,7 +37,7 @@
 %% don't mess with blank lines here in the title.
 \phantom{a}
 
-\bigskip
+\vspace{5cm}
 
 {\Large Camera trap distance sampling workshop}
 
@@ -55,7 +57,7 @@
 In this exercise you will analyse point transect survey data: camera trap data are a special case of point transect sampling. This practical acquaints you with fitting detection functions to point transect data. In the first problem, the data are simulated and so the true density is known. In the second problem, two different data collection methods were used to survey song birds.
 
 \section{Simulated data}
-Simulated point transect data from 30 points are given in the data set PTExercise. These data were generated from a half-normal detection function and the true density was 79.8 animals/hectare.  The radial distances were recorded in metres. Although the data were simulated with exact distances to each detection, we are going to analyze the data as if it were collected in equally-spaced 2.5m distance bins, because binned (also called ``interval’’) data are the norm in camera trap surveys.
+Simulated point transect data from 30 points are given in the data set \textbf{\emph{PTExercise1.zip}}. These data were generated from a half-normal detection function and the true density was 79.8 animals$\cdot \textsf{hectare}^{-1}$.  The radial distances were recorded in metres. Although the data were simulated with exact distances to each detection, we are going to analyze the data as if it were collected in equally-spaced 2.5m distance bins, because binned (also called ``interval’’) data are the norm in camera trap surveys.
 
 \subsection{Fit a half normal detection function}
 
@@ -121,8 +123,8 @@ uniform cosine trunc 20      & 1         & 1.34      & 75.55 & 57.17 & 99.83  & 
 A point transect survey of songbirds was conducted at Montrave, Fife, Scotland, in 2004 \citep{buckland2006} and for this exercise, the data gathered from winter wrens is used. Several different methods of data collection were used and for this exercise, two point transect methods are used:
 
 \begin{itemize}
-    \item standard five-minute counts and
-    \item the ‘snapshot’ method.
+    \item standard five-minute counts \textbf{\emph{(Wren1.zip)}} and
+    \item the ‘snapshot’ method \textbf{\emph{(Wren2.zip)}}. 
 \end{itemize}
 
 For each method the same 32 point transects were used in 33.2 ha of parkland (Figure 1) and each point transect was visited twice. Detection distances (recorded in metres) were measured with the aid of a rangefinder.
@@ -164,7 +166,7 @@ Although the data were collected using exact distances, we will again assume the
 	\item Record point and interval estimates for your chosen model of each data set.
 \end{itemize}
 
-Territory mapping of winter wrens in this study area suggested territory density of 1.30 $territories^{-1}$
+Territory mapping of winter wrens in this study area suggested territory density of 1.30$\cdot \textsf{hectare}^{-1}$
 
 \ifsolutionthenelse{%
 
