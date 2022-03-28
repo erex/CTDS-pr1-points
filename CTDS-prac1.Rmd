@@ -45,7 +45,7 @@ To fit a point transect detection function, the argument `transect="point"` need
 ```{r, echo=T, eval=FALSE}
 bin.cutpoints <- seq(0, 35, by = 2.5)
 ptdat.hn <- ds(data=PTExercise, transect="point", key="hn", 
-               convert.units=conversion.factor, cutpoints = bin.cutpoints)
+               convert_units=conversion.factor, cutpoints = bin.cutpoints)
 ```
 
 The fit of the detection function to the observed distance data should be assessed using the `gof_ds()` function:
@@ -54,7 +54,7 @@ The fit of the detection function to the observed distance data should be assess
 gof_ds(ptdat.hn)
 ```
 
-The `convert.units` argument gives the estimated density in animals per hectare.
+The `convert_units` argument gives the estimated density in animals per hectare.
 
 The detection function can be plotted as for line transects using the `plot()` function
 
@@ -84,7 +84,8 @@ Note, to define a different truncation distance, you can change the upper limit 
 ```{r, echo=TRUE, eval=FALSE}
 bin.cutpoints.30m <- seq(0, 30, by = 2.5)
 ptdat.hn.t30m <- ds(data=PTExercise, transect="point", key="hn", 
-                    convert.units=conversion.factor, cutpoints = bin.cutpoints.30m)
+                    convert_units=conversion.factor, 
+                    cutpoints = bin.cutpoints.30m)
 ```
 
 # Wren data (Optional)
